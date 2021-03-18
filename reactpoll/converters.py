@@ -71,11 +71,7 @@ class PollOptions(Converter):
 
     def strip_time(self, result: Dict[str, Union[List[str], str, bool, timedelta]], argument: str):
         time_split = TIME_SPLIT.split(argument)
-        if time_split:
-            maybe_time = time_split[-1]
-        else:
-            maybe_time = argument
-
+        maybe_time = time_split[-1] if time_split else argument
         time_data = {}
         for time in TIME_RE.finditer(maybe_time):
             argument = argument.replace(time[0], "")

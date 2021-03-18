@@ -77,11 +77,11 @@ class Blizzard(commands.Cog):
         return
 
     async def show_menu(self, ctx, message, messages, page):
-        if message:
-            await message.edit(content=messages[page])
-            return message
-        else:
+        if not message:
             return await ctx.send(messages[page])
+
+        await message.edit(content=messages[page])
+        return message
 
     async def _info_menu(self, ctx, messages, **kwargs):
         page = kwargs.get("page", 0)
@@ -256,10 +256,10 @@ class Blizzard(commands.Cog):
 
         if tag is None:
             tag = await self.conf.user(user).battletag()
-            if tag is None:
-                await ctx.send('You did not provide a battletag '
-                               'and I do not have one stored for you.')
-                return
+        if tag is None:
+            await ctx.send('You did not provide a battletag '
+                           'and I do not have one stored for you.')
+            return
 
         tag = tag.replace("#", "-")
         url = 'https://owapi.net/api/v3/u/' + tag + '/stats'
@@ -431,10 +431,10 @@ class Blizzard(commands.Cog):
 
         if tag is None:
             tag = await self.conf.user(user).battletag()
-            if tag is None:
-                await ctx.send('You did not provide a battletag '
-                               'and I do not have one stored for you.')
-                return
+        if tag is None:
+            await ctx.send('You did not provide a battletag '
+                           'and I do not have one stored for you.')
+            return
         key = await self.conf.apikey()
         if key is None:
             await ctx.send('The bot owner has not provided a '
@@ -459,7 +459,7 @@ class Blizzard(commands.Cog):
         tag = tag.replace("#", "-")
         url = 'https://' + region + '.api.battle.net/d3/profile/'\
               + tag + '/?locale=' + locale + '&apikey=' + key
-        
+
         async with self.session.get(url, headers=self.header) as response:
             stats = await response.json()
 
@@ -475,12 +475,21 @@ class Blizzard(commands.Cog):
                            '\nNon-Seasonal: ', str(stats['paragonLevel']),
                            '\nNon-Seasonal Hardcore: ', str(stats['paragonLevelHardcore'])])
 
-        hero_txt = ''
-        for hero in stats['heroes']:
-            hero_txt += ''.join([':leaves:' if hero['seasonal'] else '', hero['name'],
-                                 ' - lvl ', str(hero['level']), ' ', hero['class'],
-                                 ' - hardcore' if hero['hardcore'] else '',
-                                 ' (RIP)\n' if hero['dead'] else '\n'])
+        hero_txt = ''.join(
+            ''.join(
+                [
+                    ':leaves:' if hero['seasonal'] else '',
+                    hero['name'],
+                    ' - lvl ',
+                    str(hero['level']),
+                    ' ',
+                    hero['class'],
+                    ' - hardcore' if hero['hardcore'] else '',
+                    ' (RIP)\n' if hero['dead'] else '\n',
+                ]
+            )
+            for hero in stats['heroes']
+        )
 
         if not hero_txt:
             await ctx.send("You don't have any Diablo 3 heroes.")

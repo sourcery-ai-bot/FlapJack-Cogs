@@ -29,10 +29,10 @@ class ColorMe(commands.Cog):
     @staticmethod
     def _is_sharing_role(ctx: commands.Context, role):
         guild = ctx.message.guild
-        for member in guild.members:
-            if (role in member.roles) and (member.id != ctx.message.author.id):
-                return True
-        return False
+        return any(
+            (role in member.roles) and (member.id != ctx.message.author.id)
+            for member in guild.members
+        )
 
     def _could_be_colorme(self, role):
         pattern = re.compile(r'#\d{4}\Z')

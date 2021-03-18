@@ -82,7 +82,6 @@ class ReactPoll(commands.Cog):
     def cog_unload(self):
         self.close_loop = False
         self.poll_task.cancel()
-        pass
 
     async def poll_closer(self):
         await self.bot.wait_until_red_ready()
@@ -190,10 +189,7 @@ class ReactPoll(commands.Cog):
         """
         curr_setting = await self.conf.guild(ctx.guild).embed()
         await self.conf.guild(ctx.guild).embed.set(not curr_setting)
-        if curr_setting:
-            verb = "off"
-        else:
-            verb = "on"
+        verb = "off" if curr_setting else "on"
         await ctx.send(f"Reaction poll embeds turned {verb}.")
 
     @commands.group()
@@ -262,14 +258,13 @@ class ReactPoll(commands.Cog):
             if count == 0:
                 if not msg.content.endswith("?"):
                     await ctx.send("That doesn't look like a question, try again.")
-                    continue
                 else:
                     poll_options["question"] = msg.content
                     await ctx.send(
                         "Enter the options for the poll. Enter an emoji at the beginning of the message if you want to use custom emojis for the option counters."
                     )
                     count += 1
-                    continue
+                continue
             custom_emoji = EMOJI_RE.match(msg.content)
             time_match = TIME_RE.match(msg.content)
             multi_match = MULTI_RE.match(msg.content)
@@ -305,8 +300,6 @@ class ReactPoll(commands.Cog):
                     poll_options["emojis"][default_emojis[count]] = msg.content
                     poll_options["options"].append(msg.content)
                     await self.handle_pagify(ctx, f"Option {default_emojis[count]} set to {msg.content}")
-                count += 1
-                continue
             else:
                 try:
 
@@ -322,8 +315,8 @@ class ReactPoll(commands.Cog):
                     poll_options["emojis"][default_emojis[count]] = msg.content
                     poll_options["options"].append(msg.content)
                     await self.handle_pagify(ctx, f"Option {default_emojis[count]} set to {msg.content}")
-                count += 1
-                continue
+            count += 1
+            continue
         if not poll_options["emojis"]:
             return await ctx.send("No poll created.")
         new_poll = Poll(self.bot, **poll_options)
@@ -372,10 +365,7 @@ class ReactPoll(commands.Cog):
             Example format (time argument is optional):
             `[p]rpoll new Is this a poll? Yes;No;Maybe; 2 hours 21 minutes 40 seconds multi-vote`
         """
-        if not channel:
-            send_channel = ctx.channel
-        else:
-            send_channel = channel
+        send_channel = ctx.channel if not channel else channel
         if not send_channel.permissions_for(ctx.me).send_messages:
             return await ctx.send(f"I do not have permission to send messages in {send_channel.mention}")
         poll_options["channel_id"] = send_channel.id

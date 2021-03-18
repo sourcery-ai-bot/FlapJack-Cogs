@@ -79,7 +79,7 @@ class Wat(commands.Cog):
                 content = before.clean_content
                 if (
                     not author.bot
-                    and not author == message.author
+                    and author != message.author
                     and not PATTERN.fullmatch(content)
                 ):
                     emoji = "\N{CHEERING MEGAPHONE}"

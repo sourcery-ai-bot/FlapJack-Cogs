@@ -96,12 +96,8 @@ class Poll:
                             )
                         except discord.errors.Forbidden:
                             pass
-            if user_id not in self.tally[emoji]:
-                self.tally[emoji].append(user_id)
-
-        else:
-            if user_id not in self.tally[emoji]:
-                self.tally[emoji].append(user_id)
+        if user_id not in self.tally[emoji]:
+            self.tally[emoji].append(user_id)
 
     async def remove_vote(self, user_id: int, emoji: str):
         if user_id in self.tally[emoji]:
@@ -146,14 +142,12 @@ class Poll:
         # Starting codepoint for keycap number emoji (\u0030... == 0)
         base_emoji = ReactionPredicate.NUMBER_EMOJIS + ReactionPredicate.ALPHABET_EMOJIS
         msg = "**POLL STARTED!**\n\n{}\n\n".format(self.question)
-        option_num = 1
         option_msg = ""
         if not self.interactive:
-            for option in self.options:
+            for option_num, option in enumerate(self.options, start=1):
                 emoji = base_emoji[option_num]
                 self.emojis[emoji] = option
                 option_msg += f"**{option_num}**. {option}\n"
-                option_num += 1
         else:
             for emoji, option in self.emojis.items():
                 option_msg += f"{emoji}. {option}\n"
@@ -212,7 +206,6 @@ class Poll:
                 await old_msg.clear_reactions()
         except (discord.errors.Forbidden, discord.errors.NotFound):
             log.error("Cannot find message")
-            pass
         except Exception:
             log.error("error tallying results", exc_info=True)
 

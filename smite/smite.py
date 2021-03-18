@@ -90,17 +90,16 @@ class Smite(commands.Cog):
         user = ctx.message.author
         if name is None:
             name = await self.conf.user(user).smitename()
-            if name is None:
-                await ctx.send('You did not provide a name '
-                               'and I do not have one stored for you.')
-                return
+        if name is None:
+            await ctx.send('You did not provide a name '
+                           'and I do not have one stored for you.')
+            return
 
-        if not await self.test_session():
-            if not await self.create_session():
-                await ctx.send("I could not establish a connection "
-                               "to the Smite API. Has my owner input "
-                               "valid credentials?")
-                return
+        if not await self.test_session() and not await self.create_session():
+            await ctx.send("I could not establish a connection "
+                           "to the Smite API. Has my owner input "
+                           "valid credentials?")
+            return
 
         session = await self.conf.session_id()
         time = datetime.utcnow().strftime('%Y%m%d%H%M%S')
@@ -162,17 +161,16 @@ class Smite(commands.Cog):
         user = ctx.message.author
         if name is None:
             name = await self.conf.user(user).smitename()
-            if name is None:
-                await ctx.send('You did not provide a name '
-                               'and I do not have one stored for you.')
-                return
+        if name is None:
+            await ctx.send('You did not provide a name '
+                           'and I do not have one stored for you.')
+            return
 
-        if not await self.test_session():
-            if not await self.create_session():
-                await ctx.send("I could not establish a connection "
-                               "to the Smite API. Has my owner input "
-                               "valid credentials?")
-                return
+        if not await self.test_session() and not await self.create_session():
+            await ctx.send("I could not establish a connection "
+                           "to the Smite API. Has my owner input "
+                           "valid credentials?")
+            return
 
         session = await self.conf.session_id()
         time = datetime.utcnow().strftime('%Y%m%d%H%M%S')

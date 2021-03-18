@@ -27,11 +27,7 @@ class CryptoPrice(commands.Cog):
         """Fetch price data for cryptocurrencies matching your query.
         If currency is omitted, will display top 5 by market cap."""
 
-        if currency is None:
-            search = 'id'
-        else:
-            search = currency
-
+        search = 'id' if currency is None else currency
         search = search.replace(' ', '-').lower()
         results = []
 
@@ -43,7 +39,7 @@ class CryptoPrice(commands.Cog):
             if len(results) > 3:
                 break
 
-        if len(results) == 0:
+        if not results:
             await ctx.send("Couldn't find a currency matching your query.")
         elif len(results) <= 10:
             text = self.make_table(results)
@@ -61,10 +57,9 @@ class CryptoPrice(commands.Cog):
 
     def make_table(self, results, limit: int=None):
         headers = ['Name', 'Price (USD)', 'Price (BTC)', '24h Change (USD)']
-        rows = []            
+        rows = []
         for row in results:
-            column = []
-            column.append(row.find("td", class_="currency-name").a.get_text().strip())
+            column = [row.find("td", class_="currency-name").a.get_text().strip()]
             column.append(row.find("a", class_="price").get_text().strip())
             column.append(row.find("a", class_="price")['data-btc'])
             column.append(row.find("td", class_="percent-change").get_text().strip())
@@ -75,5 +70,4 @@ class CryptoPrice(commands.Cog):
             rows.sort(key=lambda column: len(column[0]))
             rows = rows[:limit]
 
-        text = tabulate(rows, headers=headers, floatfmt='.8f')
-        return text
+        return tabulate(rows, headers=headers, floatfmt='.8f')

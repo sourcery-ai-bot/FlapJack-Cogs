@@ -46,14 +46,18 @@ class Spoiler(commands.Cog):
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
         msg_id = reaction.message.id
-        if reaction.emoji == self.emoji and msg_id in self.spoilers and user.id != self.bot.user.id:
-            if user.id not in self.spoilers[msg_id]['deliveries']:
-                # reply with spoiler
-                try:
-                    await user.send("Spoiler {}: {}".format(self.spoilers[msg_id]['title'],
-                                                                  self.spoilers[msg_id]['spoiler']))
+        if (
+            reaction.emoji == self.emoji
+            and msg_id in self.spoilers
+            and user.id != self.bot.user.id
+            and user.id not in self.spoilers[msg_id]['deliveries']
+        ):
+            # reply with spoiler
+            try:
+                await user.send("Spoiler {}: {}".format(self.spoilers[msg_id]['title'],
+                                                              self.spoilers[msg_id]['spoiler']))
 
-                    self.spoilers[msg_id]['deliveries'].append(user.id)
-                except (discord.Forbidden, discord.HTTPException) as err:
-                    # It's alright to fail silently if we are unable to DM the user
-                    pass
+                self.spoilers[msg_id]['deliveries'].append(user.id)
+            except (discord.Forbidden, discord.HTTPException) as err:
+                # It's alright to fail silently if we are unable to DM the user
+                pass

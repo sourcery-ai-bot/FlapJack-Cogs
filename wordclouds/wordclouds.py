@@ -162,9 +162,10 @@ class WordClouds(commands.Cog):
         text = ""
         try:
             async for message in channel.history(limit=limit):
-                if not message.author.bot:
-                    if user is None or user == message.author:
-                        text += message.clean_content + " "
+                if not message.author.bot and (
+                    user is None or user == message.author
+                ):
+                    text += message.clean_content + " "
             text = URL_RE.sub("", text)
         except discord.errors.Forbidden:
             await ctx.send("Wordcloud creation failed. I can't see that channel!")

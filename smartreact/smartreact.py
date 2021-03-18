@@ -128,7 +128,7 @@ class SmartReact(commands.Cog):
             return
         words = message.content.lower().split()
         for emoji in reacts:
-            if set(w.lower() for w in reacts[emoji]).intersection(words):
+            if {w.lower() for w in reacts[emoji]}.intersection(words):
                 emoji = self.fix_custom_emoji(emoji)
                 if not emoji:
                     return

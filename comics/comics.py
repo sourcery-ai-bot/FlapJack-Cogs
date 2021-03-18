@@ -32,9 +32,9 @@ class Comics(commands.Cog):
     async def ohno(self, ctx):
         """Webcomic Name"""
 
-        url = "http://webcomicname.com/random"
-
         async with ctx.typing():
+            url = "http://webcomicname.com/random"
+
             async with self.session.get(url) as response:
                 soup = BeautifulSoup(await response.text(), "html.parser")
 
@@ -50,9 +50,9 @@ class Comics(commands.Cog):
     async def smbc(self, ctx):
         """Saturday Morning Breakfast Cereal"""
 
-        url = "http://www.smbc-comics.com/comic/archive"
-
         async with ctx.typing():
+            url = "http://www.smbc-comics.com/comic/archive"
+
             async with self.session.get(url, headers={"Connection": "keep-alive"}) as response:
                 soup = BeautifulSoup(await response.text(), "html.parser")
 
@@ -77,9 +77,9 @@ class Comics(commands.Cog):
     async def pbf(self, ctx):
         """The Perry Bible Fellowship"""
 
-        url = "http://pbfcomics.com/random"
-
         async with ctx.typing():
+            url = "http://pbfcomics.com/random"
+
             async with self.session.get(url) as response:
                 soup = BeautifulSoup(await response.text(), "html.parser")
 
@@ -95,9 +95,9 @@ class Comics(commands.Cog):
     async def cah(self, ctx):
         """Cyanide and Happiness"""
 
-        url = "http://explosm.net/comics/random"
-
         async with ctx.typing():
+            url = "http://explosm.net/comics/random"
+
             async with self.session.get(url) as response:
                 soup = BeautifulSoup(await response.text(), "html.parser")
 
@@ -113,12 +113,12 @@ class Comics(commands.Cog):
     async def xkcd(self, ctx):
         """XKCD"""
 
-        url = "https://c.xkcd.com/random/comic/"
-        phrase = r"Image URL \(for hotlinking\/embedding\)\:.*"
-
         async with ctx.typing():
+            url = "https://c.xkcd.com/random/comic/"
             async with self.session.get(url) as response:
                 soup = BeautifulSoup(await response.text(), "html.parser")
+
+            phrase = r"Image URL \(for hotlinking\/embedding\)\:.*"
 
             img_url = soup.find(string=re.compile(phrase))
             img_url = "https://" + img_url.split("https://")[1].rstrip()
@@ -133,9 +133,9 @@ class Comics(commands.Cog):
     async def mrls(self, ctx):
         """Mr. Lovenstein"""
 
-        url = "http://www.mrlovenstein.com/shuffle"
-
         async with ctx.typing():
+            url = "http://www.mrlovenstein.com/shuffle"
+
             async with self.session.get(url) as response:
                 soup = BeautifulSoup(await response.text(), "html.parser")
 
@@ -151,9 +151,9 @@ class Comics(commands.Cog):
     async def chainsaw(self, ctx):
         """Chainsawsuit"""
 
-        url = "http://chainsawsuit.com/comic/random/?random&nocache=1"
-
         async with ctx.typing():
+            url = "http://chainsawsuit.com/comic/random/?random&nocache=1"
+
             async with self.session.get(url) as response:
                 soup = BeautifulSoup(await response.text(), "html.parser")
 
@@ -169,9 +169,9 @@ class Comics(commands.Cog):
     async def sarah(self, ctx):
         """Sarah's Scribbles"""
 
-        url = "http://www.gocomics.com/random/sarahs-scribbles"
-
         async with ctx.typing():
+            url = "http://www.gocomics.com/random/sarahs-scribbles"
+
             async with self.session.get(url) as response:
                 soup = BeautifulSoup(await response.text(), "html.parser")
 
@@ -239,12 +239,12 @@ class Comics(commands.Cog):
         \t`[p]calvin`\t\tFetches random comic
         \t`[p]calvin 1995-12-31`\tFetches comic for Dec 31, 1995
         """
-        bad_date_message = "That doesn't seem like a valid date. Try a format like `1995-12-31`."
         start_date = datetime.date(1985, 11, 18)
         end_date = datetime.date(1995, 12, 31)
 
         if date:
             split_date = str(date).split("-")  # (YYYY, MM, DD)
+            bad_date_message = "That doesn't seem like a valid date. Try a format like `1995-12-31`."
             try:
                 supplied_date = datetime.date(int(split_date[0]), int(split_date[1]), int(split_date[2]))
             except ValueError:
@@ -289,12 +289,12 @@ class Comics(commands.Cog):
         \t`[p]garfield`\t\tFetches random comic
         \t`[p]garfield 1978-06-19`\tFetches comic for Jun 19, 1978
         """
-        bad_date_message = "That doesn't seem like a valid date. Try a format like `1994-06-16`."
         start_date = datetime.date(1978, 6, 19)
         end_date = datetime.datetime.today().date()
 
         if date:
             split_date = str(date).split("-")  # (YYYY, MM, DD)
+            bad_date_message = "That doesn't seem like a valid date. Try a format like `1994-06-16`."
             try:
                 supplied_date = datetime.date(int(split_date[0]), int(split_date[1]), int(split_date[2]))
             except ValueError:
@@ -327,9 +327,9 @@ class Comics(commands.Cog):
 
         Only random comics are available.
         """
-        all_comics = []
-        main_url = "https://theodd1sout.com/pages/comics"
         async with ctx.typing():
+            all_comics = []
+            main_url = "https://theodd1sout.com/pages/comics"
             async with self.session.get(main_url) as response:
                 html = await response.text()
                 soup = BeautifulSoup(html, "html.parser")
@@ -358,5 +358,4 @@ class Comics(commands.Cog):
         time_between_dates = end_date - start_date
         days_between_dates = time_between_dates.days
         random_number_of_days = random.randrange(days_between_dates)
-        date = start_date + datetime.timedelta(days=random_number_of_days)
-        return date
+        return start_date + datetime.timedelta(days=random_number_of_days)
